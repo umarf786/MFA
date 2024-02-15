@@ -65,4 +65,19 @@ class UserTest {
         // Assertion
         assertEquals(expected_list, actual_list);
     }
+
+    @Test
+    @DisplayName("testGetAuthMethodsEmptyList")
+    void testGetAuthMethodsEmptyList() {
+        // Setup
+        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<String>());
+        ArrayList<String> expected_list = new ArrayList<>();
+
+        // Execution
+        ArrayList<String> actual_list = umar.getAuthMethods();
+
+        // Assertion
+        assertEquals(expected_list, actual_list);
+    }
+
 }
