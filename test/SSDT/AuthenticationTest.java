@@ -3,13 +3,16 @@ package SSDT;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Scanner;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,16 +23,27 @@ class AuthenticationTest {
         Authentication.users = new ArrayList<>();
     }
 
-    @Test
-    @DisplayName("testSignInSuccess")
-    void testSignInSuccess() {
+    private static Stream<Arguments> testSignInData() {
+        return Stream.of(
+                Arguments.of("umarf786", "password", "phone", "123", 1),
+                Arguments.of("david1", "wordpass", "email", "123", 1),
+                Arguments.of("malcolm2", "wordpad", "app", "123", 1),
+                Arguments.of("cheese33", "leicester", "text", "123", 1)
+        );
+    }
+
+    @ParameterizedTest(name = "Test SignIn with Username: {0}, Password: {1}, AuthMethod: {2}, MFA: {3}")
+    @MethodSource("testSignInData")
+    void testSignIn(String username, String password, String authMethod, String mfaCode, int expected_result) {
         // Setup
-        String input = "umarf786\npassword\nphone\n123\n";
+        String input = username + "\n" + password + "\n" + authMethod + "\n" + mfaCode + "\n";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
         User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        User david = new User(2, "David", "david1", "wordpass", new ArrayList<>(Arrays.asList("phone", "email")));
+        User malcolm = new User(3, "Malcolm", "malcolm2", "wordpad", new ArrayList<>(Arrays.asList("email", "app")));
+        User cheese = new User(4, "Cheese", "cheese33", "leicester", new ArrayList<>(Arrays.asList("text", "app")));
         Authentication auth = new Authentication();
-        int expected_result = 1;
 
         // Execution
         int actual_result = auth.signIn();
@@ -37,6 +51,7 @@ class AuthenticationTest {
         // Assertion
         assertEquals(expected_result, actual_result);
     }
+
 
     @Test
     @DisplayName("testSignInInvalidUsername")
@@ -244,12 +259,15 @@ class AuthenticationTest {
         User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
         User igbo = new User(1, "Igbohim", "igbo1", "wordpass", new ArrayList<>(Arrays.asList("email", "app")));
         Authentication auth = new Authentication();
+        HashMap<String, String> expected_result = new HashMap<>();
+        expected_result.put("umarf786", "password");
+        expected_result.put("igbo1", "wordpass");
 
         // Execution
-        HashMap<String, String> expected_result = auth.getAllUsernamesAndPasswords();
+        HashMap<String, String> actual_result = auth.getAllUsernamesAndPasswords();
 
         // Assertion
-        assertTrue(!expected_result.isEmpty());
+        assertEquals(expected_result, actual_result);
     }
 
     @Test
@@ -272,12 +290,15 @@ class AuthenticationTest {
         User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
         User igbo = new User(1, "Igbohim", "igbo1", "wordpass", new ArrayList<>(Arrays.asList("email", "app")));
         Authentication auth = new Authentication();
+        HashMap<String, ArrayList<String>> expected_result = new HashMap<>();
+        expected_result.put("umarf786", new ArrayList<>(Arrays.asList("phone", "app")));
+        expected_result.put("igbo1", new ArrayList<>(Arrays.asList("email", "app")));
 
         // Execution
         HashMap<String, ArrayList<String>> actual_result = auth.getAllAuthMethods();
 
         // Assertion
-        assertTrue(!actual_result.isEmpty());
+        assertEquals(expected_result, actual_result);
     }
 
     @Test
