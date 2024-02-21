@@ -24,17 +24,13 @@ class AuthenticationTest {
         Authentication.users = new ArrayList<>();
     }
 
-    private static Stream<Arguments> testSignInData() {
-        return Stream.of(
-                Arguments.of("umarf786", "password", "phone", "123", 1),
-                Arguments.of("david1", "wordpass", "email", "123", 1),
-                Arguments.of("malcolm2", "wordpad", "app", "123", 1),
-                Arguments.of("cheese33", "leicester", "text", "123", 1)
-        );
-    }
-
     @ParameterizedTest(name = "Test SignIn with Username: {0}, Password: {1}, AuthMethod: {2}, MFA: {3}")
-    @MethodSource("testSignInData")
+    @CsvSource({
+            "umarf786, password, phone, 123, 1",
+            "david1, wordpass, email, 123, 1",
+            "malcolm2, wordpad, app, 123, 1",
+            "cheese33, leicester, text, 123, 1"
+    })
     void testSignIn(String username, String password, String authMethod, String mfaCode, int expected_result) {
         // Setup
         String input = username + "\n" + password + "\n" + authMethod + "\n" + mfaCode + "\n";
