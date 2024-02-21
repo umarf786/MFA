@@ -4,16 +4,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,10 +33,10 @@ class AuthenticationTest {
         String input = username + "\n" + password + "\n" + authMethod + "\n" + mfaCode + "\n";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
-        User david = new User(2, "David", "david1", "wordpass", new ArrayList<>(Arrays.asList("phone", "email")));
-        User malcolm = new User(3, "Malcolm", "malcolm2", "wordpad", new ArrayList<>(Arrays.asList("email", "app")));
-        User cheese = new User(4, "Cheese", "cheese33", "leicester", new ArrayList<>(Arrays.asList("text", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(2, "David", "david1", "wordpass", new ArrayList<>(Arrays.asList("phone", "email")));
+        new User(3, "Malcolm", "malcolm2", "wordpad", new ArrayList<>(Arrays.asList("email", "app")));
+        new User(4, "Cheese", "cheese33", "leicester", new ArrayList<>(Arrays.asList("text", "app")));
         Authentication auth = new Authentication();
 
         // Execution
@@ -57,7 +54,7 @@ class AuthenticationTest {
         String input = "umarf7860\n";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
         Authentication auth = new Authentication();
         int expected_result = -2;
 
@@ -75,7 +72,7 @@ class AuthenticationTest {
         String input = "umarf786\npasswordo\n";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
         Authentication auth = new Authentication();
         int expected_result = -3;
 
@@ -93,7 +90,7 @@ class AuthenticationTest {
         String input = "umarf786\npassword\nemail\n";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
         Authentication auth = new Authentication();
         int expected_result = -5;
 
@@ -112,7 +109,7 @@ class AuthenticationTest {
         String input = "umarf786\npassword\naaaaa\n";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
         Authentication auth = new Authentication();
         int expected_result = -5;
 
@@ -130,7 +127,7 @@ class AuthenticationTest {
         String input = "umarf786\npassword\nphone\n1233\n";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
         Authentication auth = new Authentication();
         int expected_result = -4;
 
@@ -203,8 +200,8 @@ class AuthenticationTest {
     @DisplayName("testGetAllUsernamesAndPasswordsReturnsAPopulatedHashmap")
     void testGetAllUsernamesAndPasswordsReturnsAPopulatedHashmap() {
         // Setup
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
-        User igbo = new User(1, "Igbohim", "igbo1", "wordpass", new ArrayList<>(Arrays.asList("email", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(1, "Igbohim", "igbo1", "wordpass", new ArrayList<>(Arrays.asList("email", "app")));
         Authentication auth = new Authentication();
         HashMap<String, String> expected_result = new HashMap<>();
         expected_result.put("umarf786", "password");
@@ -234,8 +231,8 @@ class AuthenticationTest {
     @DisplayName("testGetAllAuthMethodsReturnsAPopulatedHashmap")
     void testGetAllAuthMethodsReturnsAPopulatedHashmap() {
         // Setup
-        User umar = new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
-        User igbo = new User(1, "Igbohim", "igbo1", "wordpass", new ArrayList<>(Arrays.asList("email", "app")));
+        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+        new User(1, "Igbohim", "igbo1", "wordpass", new ArrayList<>(Arrays.asList("email", "app")));
         Authentication auth = new Authentication();
         HashMap<String, ArrayList<String>> expected_result = new HashMap<>();
         expected_result.put("umarf786", new ArrayList<>(Arrays.asList("phone", "app")));
