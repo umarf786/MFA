@@ -4,9 +4,6 @@ package SSDT;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-// Import global users mock db
-import static SSDT.Authentication.users;
-
 public class Demo {
     public static void main(String[] args) {
         // Create two users and add them to the global list (mock database)

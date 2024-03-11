@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationTest {
@@ -44,6 +43,7 @@ class AuthenticationTest {
 
         // Assertion
         assertEquals(expected_result, actual_result);
+
     }
 
 
@@ -138,63 +138,6 @@ class AuthenticationTest {
         assertEquals(expected_result, actual_result);
     }
 
-    @ParameterizedTest(name = "Test checkMultiAuth with AuthMethod: {0}")
-    @CsvSource({
-            "phone, 123",
-            "email, 123",
-            "text, 123",
-            "app, 123"
-    })
-    void testCheckMultiAuthSuccess(String authMethod, String input) {
-        // Setup
-        ArrayList<String> authMethods = new ArrayList<>(Arrays.asList("phone", "text", "app", "email"));
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        Authentication auth = new Authentication();
-        int expected_result = 1;
-
-        // Execution
-        int actual_result = auth.checkMultiAuth(authMethod, authMethods);
-
-        // Assertion
-        assertEquals(expected_result, actual_result);
-    }
-
-    @Test
-    @DisplayName("testCheckMultiAuthInvalidMethod")
-    void testCheckMultiAuthInvalidMethod() {
-        // Setup
-        ArrayList<String> authMethods = new ArrayList<>(Arrays.asList("phone", "app"));
-        String input = "123\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        Authentication auth = new Authentication();
-        int expected_result = -1;
-
-        // Execution
-        int actual_result = auth.checkMultiAuth("appa", authMethods);
-
-        // Assertion
-        assertEquals(expected_result, actual_result);
-    }
-
-    @Test
-    @DisplayName("testCheckMultiAuthInvalidCode")
-    void testCheckMultiAuthInvalidCode() {
-        // Setup
-        ArrayList<String> authMethods = new ArrayList<>(Arrays.asList("phone", "app"));
-        String input = "1234\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        Authentication auth = new Authentication();
-        int expected_result = -2;
-
-        // Execution
-        int actual_result = auth.checkMultiAuth("app", authMethods);
-
-        // Assertion
-        assertEquals(expected_result, actual_result);
-    }
 
     @Test
     @DisplayName("testGetAllUsernamesAndPasswordsReturnsAPopulatedHashmap")
@@ -239,7 +182,7 @@ class AuthenticationTest {
         expected_result.put("igbo1", new ArrayList<>(Arrays.asList("email", "app")));
 
         // Execution
-        HashMap<String, ArrayList<String>> actual_result = auth.getAllAuthMethods();
+        HashMap<String, ArrayList<String>> actual_result = auth.MultiAuth.getAllAuthMethods();
 
         // Assertion
         assertEquals(expected_result, actual_result);
@@ -252,7 +195,7 @@ class AuthenticationTest {
         Authentication auth = new Authentication();
 
         // Execution
-        HashMap<String, ArrayList<String>> actual_result = auth.getAllAuthMethods();
+        HashMap<String, ArrayList<String>> actual_result = auth.MultiAuth.getAllAuthMethods();
 
         // Assertion
         System.out.println(actual_result);
