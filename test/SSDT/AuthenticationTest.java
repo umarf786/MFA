@@ -17,15 +17,15 @@ class AuthenticationTest {
 
     @AfterEach
     void tearDown(){
-        Authentication.users = new ArrayList<>();
+        User.users = new ArrayList<>();
     }
 
     @ParameterizedTest(name = "Test SignIn with Username: {0}, Password: {1}, AuthMethod: {2}, MFA: {3}")
     @CsvSource({
-            "umarf786, password, phone, 123, 1",
-            "david1, wordpass, email, 123, 1",
-            "malcolm2, wordpad, app, 123, 1",
-            "cheese33, leicester, text, 123, 1"
+            "umarf786, password, phone, 111, 1",
+            "david1, wordpass, email, 333, 1",
+            "malcolm2, wordpad, app, 444, 1",
+            "cheese33, leicester, text, 222, 1"
     })
     void testSignIn(String username, String password, String authMethod, String mfaCode, int expected_result) {
         // Setup
@@ -45,7 +45,6 @@ class AuthenticationTest {
         assertEquals(expected_result, actual_result);
 
     }
-
 
     @Test
     @DisplayName("testSignInInvalidUsername")

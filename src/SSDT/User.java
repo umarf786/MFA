@@ -2,9 +2,12 @@ package SSDT;
 
 import java.util.ArrayList;
 // Import global users mock db
-import static SSDT.Authentication.users;
+import static SSDT.User.users;
 
 public class User {
+    // Global users arraylist (mock db)
+    public static ArrayList<User> users = new ArrayList<>();
+
     // Creating attributes for each user
     private int id;
     private String name;

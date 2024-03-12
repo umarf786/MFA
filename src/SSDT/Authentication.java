@@ -4,10 +4,10 @@ package SSDT;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
+// Import global users mock db
+import static SSDT.User.users;
 
 public class Authentication {
-    // Global users arraylist (mock db)
-    public static ArrayList<User> users = new ArrayList<>();
     // Instantiate a scanner to take input from a user
     public Scanner input = new Scanner(System.in);
     MultiAuth MultiAuth = new MultiAuth(input);
@@ -62,7 +62,7 @@ public class Authentication {
 
     public HashMap<String, String> getAllUsernamesAndPasswords(){
         // Initialise hashmap to store all usernames and their associated passwords
-        HashMap<String, String> usernames_and_passwords = new HashMap();
+        HashMap<String, String> usernames_and_passwords = new HashMap<>();
 
         // For each user in the mock db, add their username and passwords to the hashmap
         for (User user : users){

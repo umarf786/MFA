@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,16 +20,16 @@ class MultiAuthTest {
 
     @AfterEach
     void tearDown(){
-        Authentication.users = new ArrayList<>();
+        User.users = new ArrayList<>();
     }
 
 
     @ParameterizedTest(name = "Test checkMultiAuth with AuthMethod: {0}")
     @CsvSource({
-            "phone, 123",
-            "email, 123",
-            "text, 123",
-            "app, 123"
+            "phone, 111",
+            "email, 333",
+            "text, 222",
+            "app, 444"
     })
     void testCheckMultiAuthSuccess(String authMethod, String input) {
         // Setup
@@ -112,4 +113,93 @@ class MultiAuthTest {
         System.out.println(actual_result);
         assertTrue(actual_result.isEmpty());
     }
+
+    @DisplayName("testPhone")
+    @ParameterizedTest(name = "Test phone with Code: {0}, Expected Response Code: {1}")
+    @CsvSource({
+            "111, 1",
+            "222, -1",
+            "333, -1",
+    })
+    void testPhone(String code, int expectedResponseCode) {
+        // Set up the input stream for the scanner
+        InputStream in = new ByteArrayInputStream(code.getBytes());
+        Scanner scanner = new Scanner(in);
+
+        // Create a MultiAuth instance with the provided scanner
+        MultiAuth multiAuth = new MultiAuth(scanner);
+
+        // Execute the phone method
+        int actualResponseCode = multiAuth.phone();
+
+        // Assert the result
+        assertEquals(expectedResponseCode, actualResponseCode);
+    }
+
+    @DisplayName("testText")
+    @ParameterizedTest(name = "Test text with Code: {0}, Expected Response Code: {1}")
+    @CsvSource({
+            "222, 1",
+            "555, -1",
+            "333, -1",
+    })
+    void testText(String code, int expectedResponseCode) {
+        // Set up the input stream for the scanner
+        InputStream in = new ByteArrayInputStream(code.getBytes());
+        Scanner scanner = new Scanner(in);
+
+        // Create a MultiAuth instance with the provided scanner
+        MultiAuth multiAuth = new MultiAuth(scanner);
+
+        // Execute the phone method
+        int actualResponseCode = multiAuth.text();
+
+        // Assert the result
+        assertEquals(expectedResponseCode, actualResponseCode);
+    }
+
+    @DisplayName("testEmail")
+    @ParameterizedTest(name = "Test email with Code: {0}, Expected Response Code: {1}")
+    @CsvSource({
+            "333, 1",
+            "555, -1",
+            "444, -1",
+    })
+    void testEmail(String code, int expectedResponseCode) {
+        // Set up the input stream for the scanner
+        InputStream in = new ByteArrayInputStream(code.getBytes());
+        Scanner scanner = new Scanner(in);
+
+        // Create a MultiAuth instance with the provided scanner
+        MultiAuth multiAuth = new MultiAuth(scanner);
+
+        // Execute the phone method
+        int actualResponseCode = multiAuth.email();
+
+        // Assert the result
+        assertEquals(expectedResponseCode, actualResponseCode);
+    }
+
+    @DisplayName("testApp")
+    @ParameterizedTest(name = "Test app with Code: {0}, Expected Response Code: {1}")
+    @CsvSource({
+            "444, 1",
+            "555, -1",
+            "333, -1",
+    })
+    void testApp(String code, int expectedResponseCode) {
+        // Set up the input stream for the scanner
+        InputStream in = new ByteArrayInputStream(code.getBytes());
+        Scanner scanner = new Scanner(in);
+
+        // Create a MultiAuth instance with the provided scanner
+        MultiAuth multiAuth = new MultiAuth(scanner);
+
+        // Execute the phone method
+        int actualResponseCode = multiAuth.app();
+
+        // Assert the result
+        assertEquals(expectedResponseCode, actualResponseCode);
+    }
+
 }

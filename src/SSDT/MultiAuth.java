@@ -4,42 +4,78 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import static SSDT.Authentication.users;
+import static SSDT.User.users;
 
-public class MultiAuth {
-    Scanner input;
+public class MultiAuth extends Authentication {
+    private final Scanner input;
 
     public MultiAuth(Scanner input){
         this.input = input;
     }
 
+    public int phone(){
+        System.out.println("Calling your phone now with a code. Please enter it");
+        String code = input.nextLine();
+        if (code.equals("111")){
+            return 1;
+        }
+        return -1;
+    }
+
+    public int text(){
+        System.out.println("Sending a message now with a code. Please enter it");
+        String code = input.nextLine();
+        if (code.equals("222")){
+            return 1;
+        }
+        return -1;
+    }
+
+    public int email(){
+        System.out.println("Sending an email now with a code. Please enter it");
+        String code = input.nextLine();
+        if (code.equals("333")){
+            return 1;
+        }
+        return -1;
+    }
+
+    public int app(){
+        System.out.println("Open your auth app and enter the code");
+        String code = input.nextLine();
+        if (code.equals("444")){
+            return 1;
+        }
+        return -1;
+    }
+
     public int checkMultiAuth(String method, ArrayList<String> availableMethods){
+        // Initialise default response code
+        int response_code = -5;
+
         // Check if the provided method is available/selected for the given username
         // If so, continue with the process. If not, tell user and return
         if (availableMethods.contains(method)){
-            if (method.equals("phone")){
-                System.out.println("Calling your phone now with a code. Please enter it.");
-            }
-            if (method.equals("text")){
-                System.out.println("Sending you a text now with a code. Please enter it.");
-            }
-            if (method.equals("app")){
-                System.out.println("Open your auth app and find the code. Please enter it.");
-            }
-            if (method.equals("email")){
-                System.out.println("Sending a code to your email now. Please enter it.");
-            }
+            response_code = switch (method) {
+                case "phone" -> phone();
+                case "text" -> text();
+                case "email" -> email();
+                case "app" -> app();
+                default -> response_code;
+            };
 
-            String code = input.nextLine();
-            if (code.equals("123")){
+            // If code is correct
+            if (response_code == 1){
                 System.out.println("MFA accepted");
                 return 1;
             }
+            // If code is incorrect
             else{
                 System.out.println("Please enter a valid code next time, try again");
                 return -2;
             }
         }
+        // If the method is not available to the user or doesn't exist
         else{
             System.out.println("Not a valid authentication method or this method is not available to you");
             return -1;
@@ -48,7 +84,7 @@ public class MultiAuth {
 
     public HashMap<String, ArrayList<String>> getAllAuthMethods(){
         // Initialise hashmap to store all usernames and their associated auth methods
-        HashMap<String, ArrayList<String>> usernames_and_authmethods = new HashMap();
+        HashMap<String, ArrayList<String>> usernames_and_authmethods = new HashMap<>();
 
         // For each user in the mock db, add their username and auth methods to the hashmap
         for (User user : users){
