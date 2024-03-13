@@ -1,9 +1,10 @@
 package SSDT;
 
 import java.util.ArrayList;
-// Import global users mock db
-import static SSDT.User.users;
 
+/**
+ * Represents a user in the system.
+ */
 public class User {
     // Global users arraylist (mock db)
     public static ArrayList<User> users = new ArrayList<>();
@@ -15,8 +16,16 @@ public class User {
     private String password;
     private ArrayList<String> authMethods;
 
-    // Constructor to set the attributes for each user instance
-    public User (int id, String name, String username, String password, ArrayList<String> authMethods){
+    /**
+     * Constructor to initialize a User object with provided attributes.
+     *
+     * @param id           The unique identifier for the user.
+     * @param name         The full name of the user.
+     * @param username     The username of the user.
+     * @param password     The password of the user.
+     * @param authMethods  The list of authentication methods associated with the user.
+     */
+    public User(int id, String name, String username, String password, ArrayList<String> authMethods) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -25,23 +34,39 @@ public class User {
         users.add(this);
     }
 
-    // Method to get the id of a user
-    public int getID(){
+    /**
+     * Retrieves the ID of the user.
+     *
+     * @return The ID of the user.
+     */
+    public int getID() {
         return this.id;
     }
 
-    // Method to get the username of a user
-    public String getUsername(){
+    /**
+     * Retrieves the username of the user.
+     *
+     * @return The username of the user.
+     */
+    public String getUsername() {
         return this.username;
     }
 
-    // Method to get the password of a user
-    public String getPassword(){
+    /**
+     * Retrieves the password of the user.
+     *
+     * @return The password of the user.
+     */
+    public String getPassword() {
         return this.password;
     }
 
-    // Method to get the auth methods
-    public ArrayList<String> getAuthMethods(){
+    /**
+     * Retrieves the list of authentication methods associated with the user.
+     *
+     * @return The list of authentication methods.
+     */
+    public ArrayList<String> getAuthMethods() {
         return this.authMethods;
     }
 }
