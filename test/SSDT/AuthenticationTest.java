@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.MockedStatic;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -12,12 +13,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mockStatic;
 
 class AuthenticationTest {
 
     @AfterEach
     void tearDown(){
-        User.users = new ArrayList<>();
+        Database.users = new ArrayList<>();
     }
 
     @ParameterizedTest(name = "Test SignIn with Username: {0}, Password: {1}, AuthMethod: {2}, MFA: {3}")
@@ -28,22 +30,26 @@ class AuthenticationTest {
             "cheese33, leicester, text, 222, 1"
     })
     void testSignIn(String username, String password, String authMethod, String mfaCode, int expected_result) {
-        // Setup
-        String input = username + "\n" + password + "\n" + authMethod + "\n" + mfaCode + "\n";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
-        new User(2, "David", "david1", "wordpass", new ArrayList<>(Arrays.asList("phone", "email")));
-        new User(3, "Malcolm", "malcolm2", "wordpad", new ArrayList<>(Arrays.asList("email", "app")));
-        new User(4, "Cheese", "cheese33", "leicester", new ArrayList<>(Arrays.asList("text", "app")));
-        Authentication auth = new Authentication();
+        try (MockedStatic<CodeGenerator> codeGeneratorMock = mockStatic(CodeGenerator.class)) {
+            codeGeneratorMock.when(CodeGenerator::generateRandomCode).thenReturn(mfaCode);
 
-        // Execution
-        int actual_result = auth.signIn();
+            // Setup
+            String input = username + "\n" + password + "\n" + authMethod + "\n" + mfaCode + "\n";
+            InputStream in = new ByteArrayInputStream(input.getBytes());
+            System.setIn(in);
+            new User(1, "Umar", "umarf786", "password", new ArrayList<>(Arrays.asList("phone", "app")));
+            new User(2, "David", "david1", "wordpass", new ArrayList<>(Arrays.asList("phone", "email")));
+            new User(3, "Malcolm", "malcolm2", "wordpad", new ArrayList<>(Arrays.asList("email", "app")));
+            new User(4, "Cheese", "cheese33", "leicester", new ArrayList<>(Arrays.asList("text", "app")));
+            Authentication auth = new Authentication();
 
-        // Assertion
-        assertEquals(expected_result, actual_result);
+            // Execution
+            int actual_result = auth.signIn();
 
+            // Assertion
+            assertEquals(expected_result, actual_result);
+
+        }
     }
 
     @Test

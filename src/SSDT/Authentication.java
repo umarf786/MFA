@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
 // Import global users mock db
-import static SSDT.User.users;
+import static SSDT.Database.users;
 
 /**
  * Handles user authentication processes.

@@ -1,13 +1,12 @@
 package SSDT;
 
 import java.util.ArrayList;
+import static SSDT.Database.users;
 
 /**
  * Represents a user in the system.
  */
 public class User {
-    // Global users arraylist (mock db)
-    public static ArrayList<User> users = new ArrayList<>();
 
     // Creating attributes for each user
     private int id;

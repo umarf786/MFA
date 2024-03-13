@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import static SSDT.User.users;
+import static SSDT.Database.users;
 
 /**
  * Handles multifactor authentication methods for user verification.
@@ -26,10 +26,12 @@ public class MultiAuth {
      *
      * @return 1 if the entered code matches, otherwise -1.
      */
-    public int phone() {
+    public int phoneAuth() {
         System.out.println("Calling your phone now with a code. Please enter it");
+        String generatedCode = CodeGenerator.generateRandomCode();
+        System.out.println("MOCK: Generated code is " + generatedCode);
         String code = input.nextLine();
-        if (code.equals("111")) {
+        if (code.equals(generatedCode)) {
             return 1;
         }
         return -1;
@@ -40,10 +42,12 @@ public class MultiAuth {
      *
      * @return 1 if the entered code matches, otherwise -1.
      */
-    public int text() {
+    public int textAuth() {
         System.out.println("Sending a message now with a code. Please enter it");
+        String generatedCode = CodeGenerator.generateRandomCode();
+        System.out.println("MOCK: Generated code is " + generatedCode);
         String code = input.nextLine();
-        if (code.equals("222")) {
+        if (code.equals(generatedCode)) {
             return 1;
         }
         return -1;
@@ -54,10 +58,12 @@ public class MultiAuth {
      *
      * @return 1 if the entered code matches, otherwise -1.
      */
-    public int email() {
+    public int emailAuth() {
         System.out.println("Sending an email now with a code. Please enter it");
+        String generatedCode = CodeGenerator.generateRandomCode();
+        System.out.println("MOCK: Generated code is " + generatedCode);
         String code = input.nextLine();
-        if (code.equals("333")) {
+        if (code.equals(generatedCode)) {
             return 1;
         }
         return -1;
@@ -68,10 +74,12 @@ public class MultiAuth {
      *
      * @return 1 if the entered code matches, otherwise -1.
      */
-    public int app() {
+    public int appAuth() {
         System.out.println("Open your auth app and enter the code");
+        String generatedCode = CodeGenerator.generateRandomCode();
+        System.out.println("MOCK: Generated code is " + generatedCode);
         String code = input.nextLine();
-        if (code.equals("444")) {
+        if (code.equals(generatedCode)) {
             return 1;
         }
         return -1;
@@ -92,10 +100,10 @@ public class MultiAuth {
         // If so, continue with the process. If not, tell user and return
         if (availableMethods.contains(method)) {
             response_code = switch (method) {
-                case "phone" -> phone();
-                case "text" -> text();
-                case "email" -> email();
-                case "app" -> app();
+                case "phone" -> phoneAuth();
+                case "text" -> textAuth();
+                case "email" -> emailAuth();
+                case "app" -> appAuth();
                 default -> response_code;
             };
 
@@ -105,9 +113,13 @@ public class MultiAuth {
                 return 1;
             }
             // If code is incorrect
-            else {
+            else if (response_code != -5) {
                 System.out.println("Please enter a valid code next time, try again");
                 return -2;
+            }
+            // Default case
+            else{
+                return -5;
             }
         }
         // If the method is not available to the user or doesn't exist

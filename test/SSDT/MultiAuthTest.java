@@ -5,45 +5,62 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mockStatic;
 
 class MultiAuthTest {
+//    private ByteArrayOutputStream outContent;
+//
+//    @BeforeEach
+//    void setUp(){
+//        // Redirect System.out to a ByteArrayOutputStream
+//        outContent = new ByteArrayOutputStream();
+//        System.setOut(new PrintStream(outContent));
+//    }
 
     @AfterEach
     void tearDown(){
-        User.users = new ArrayList<>();
+        Database.users = new ArrayList<>();
     }
 
 
-    @ParameterizedTest(name = "Test checkMultiAuth with AuthMethod: {0}")
+    @ParameterizedTest(name = "Test checkMultiAuth with AuthMethod: {0}, Input: {1}")
     @CsvSource({
             "phone, 111",
-            "email, 333",
-            "text, 222",
+            "email, 222",
+            "text, 333",
             "app, 444"
     })
     void testCheckMultiAuthSuccess(String authMethod, String input) {
-        // Setup
-        ArrayList<String> authMethods = new ArrayList<>(Arrays.asList("phone", "text", "app", "email"));
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        Authentication auth = new Authentication();
-        int expected_result = 1;
+        try (MockedStatic<CodeGenerator> codeGeneratorMock = mockStatic(CodeGenerator.class)) {
+            codeGeneratorMock.when(CodeGenerator::generateRandomCode).thenReturn(input);
 
-        // Execution
-        int actual_result = auth.MultiAuth.checkMultiAuth(authMethod, authMethods);
+            // Setup
+            ArrayList<String> authMethods = new ArrayList<>(Arrays.asList("phone", "text", "app", "email"));
+            InputStream in = new ByteArrayInputStream(input.getBytes());
+            System.setIn(in);
+            Authentication auth = new Authentication();
+            int expected_result = 1;
 
-        // Assertion
-        assertEquals(expected_result, actual_result);
+            // Execution
+            int actual_result = auth.MultiAuth.checkMultiAuth(authMethod, authMethods);
+
+            // Assertion
+            assertEquals(expected_result, actual_result);
+            // assertTrue(outContent.toString().contains("MFA accepted"));
+        }
     }
 
     @Test
@@ -59,6 +76,24 @@ class MultiAuthTest {
 
         // Execution
         int actual_result = auth.MultiAuth.checkMultiAuth("appa", authMethods);
+
+        // Assertion
+        assertEquals(expected_result, actual_result);
+    }
+
+    @Test
+    @DisplayName("testCheckMultiAuthDefaultCase")
+    void testCheckMultiAuthDefaultCase() {
+        // Setup
+        ArrayList<String> authMethods = new ArrayList<>(Arrays.asList("aaa", "bbb"));
+        String input = "123\n";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        Authentication auth = new Authentication();
+        int expected_result = -5;
+
+        // Execution
+        int actual_result = auth.MultiAuth.checkMultiAuth("aaa", authMethods);
 
         // Assertion
         assertEquals(expected_result, actual_result);
@@ -114,29 +149,33 @@ class MultiAuthTest {
         assertTrue(actual_result.isEmpty());
     }
 
-    @DisplayName("testPhone")
+    @DisplayName("testPhoneAuth")
     @ParameterizedTest(name = "Test phone with Code: {0}, Expected Response Code: {1}")
     @CsvSource({
             "111, 1",
             "222, -1",
             "333, -1",
     })
-    void testPhone(String code, int expectedResponseCode) {
-        // Set up the input stream for the scanner
-        InputStream in = new ByteArrayInputStream(code.getBytes());
-        Scanner scanner = new Scanner(in);
+    void testPhoneAuth(String code, int expectedResponseCode) {
+        try (MockedStatic<CodeGenerator> codeGeneratorMock = mockStatic(CodeGenerator.class)) {
+            codeGeneratorMock.when(CodeGenerator::generateRandomCode).thenReturn("111");
 
-        // Create a MultiAuth instance with the provided scanner
-        MultiAuth multiAuth = new MultiAuth(scanner);
+            // Set up the input stream for the scanner
+            InputStream in = new ByteArrayInputStream(code.getBytes());
+            Scanner scanner = new Scanner(in);
 
-        // Execute the phone method
-        int actualResponseCode = multiAuth.phone();
+            // Create a MultiAuth instance with the provided scanner
+            MultiAuth multiAuth = new MultiAuth(scanner);
 
-        // Assert the result
-        assertEquals(expectedResponseCode, actualResponseCode);
+            // Execute the phone method
+            int actualResponseCode = multiAuth.phoneAuth();
+
+            // Assert the result
+            assertEquals(expectedResponseCode, actualResponseCode);
+        }
     }
 
-    @DisplayName("testText")
+    @DisplayName("testTextAuth")
     @ParameterizedTest(name = "Test text with Code: {0}, Expected Response Code: {1}")
     @CsvSource({
             "222, 1",
@@ -144,21 +183,25 @@ class MultiAuthTest {
             "333, -1",
     })
     void testText(String code, int expectedResponseCode) {
-        // Set up the input stream for the scanner
-        InputStream in = new ByteArrayInputStream(code.getBytes());
-        Scanner scanner = new Scanner(in);
+        try (MockedStatic<CodeGenerator> codeGeneratorMock = mockStatic(CodeGenerator.class)) {
+            codeGeneratorMock.when(CodeGenerator::generateRandomCode).thenReturn("222");
 
-        // Create a MultiAuth instance with the provided scanner
-        MultiAuth multiAuth = new MultiAuth(scanner);
+            // Set up the input stream for the scanner
+            InputStream in = new ByteArrayInputStream(code.getBytes());
+            Scanner scanner = new Scanner(in);
 
-        // Execute the phone method
-        int actualResponseCode = multiAuth.text();
+            // Create a MultiAuth instance with the provided scanner
+            MultiAuth multiAuth = new MultiAuth(scanner);
 
-        // Assert the result
-        assertEquals(expectedResponseCode, actualResponseCode);
+            // Execute the phone method
+            int actualResponseCode = multiAuth.textAuth();
+
+            // Assert the result
+            assertEquals(expectedResponseCode, actualResponseCode);
+        }
     }
 
-    @DisplayName("testEmail")
+    @DisplayName("testEmailAuth")
     @ParameterizedTest(name = "Test email with Code: {0}, Expected Response Code: {1}")
     @CsvSource({
             "333, 1",
@@ -166,21 +209,25 @@ class MultiAuthTest {
             "444, -1",
     })
     void testEmail(String code, int expectedResponseCode) {
-        // Set up the input stream for the scanner
-        InputStream in = new ByteArrayInputStream(code.getBytes());
-        Scanner scanner = new Scanner(in);
+        try (MockedStatic<CodeGenerator> codeGeneratorMock = mockStatic(CodeGenerator.class)) {
+            codeGeneratorMock.when(CodeGenerator::generateRandomCode).thenReturn("333");
 
-        // Create a MultiAuth instance with the provided scanner
-        MultiAuth multiAuth = new MultiAuth(scanner);
+            // Set up the input stream for the scanner
+            InputStream in = new ByteArrayInputStream(code.getBytes());
+            Scanner scanner = new Scanner(in);
 
-        // Execute the phone method
-        int actualResponseCode = multiAuth.email();
+            // Create a MultiAuth instance with the provided scanner
+            MultiAuth multiAuth = new MultiAuth(scanner);
 
-        // Assert the result
-        assertEquals(expectedResponseCode, actualResponseCode);
+            // Execute the phone method
+            int actualResponseCode = multiAuth.emailAuth();
+
+            // Assert the result
+            assertEquals(expectedResponseCode, actualResponseCode);
+        }
     }
 
-    @DisplayName("testApp")
+    @DisplayName("testAppAuth")
     @ParameterizedTest(name = "Test app with Code: {0}, Expected Response Code: {1}")
     @CsvSource({
             "444, 1",
@@ -188,18 +235,22 @@ class MultiAuthTest {
             "333, -1",
     })
     void testApp(String code, int expectedResponseCode) {
-        // Set up the input stream for the scanner
-        InputStream in = new ByteArrayInputStream(code.getBytes());
-        Scanner scanner = new Scanner(in);
+        try (MockedStatic<CodeGenerator> codeGeneratorMock = mockStatic(CodeGenerator.class)) {
+            codeGeneratorMock.when(CodeGenerator::generateRandomCode).thenReturn("444");
 
-        // Create a MultiAuth instance with the provided scanner
-        MultiAuth multiAuth = new MultiAuth(scanner);
+            // Set up the input stream for the scanner
+            InputStream in = new ByteArrayInputStream(code.getBytes());
+            Scanner scanner = new Scanner(in);
 
-        // Execute the phone method
-        int actualResponseCode = multiAuth.app();
+            // Create a MultiAuth instance with the provided scanner
+            MultiAuth multiAuth = new MultiAuth(scanner);
 
-        // Assert the result
-        assertEquals(expectedResponseCode, actualResponseCode);
+            // Execute the phone method
+            int actualResponseCode = multiAuth.appAuth();
+
+            // Assert the result
+            assertEquals(expectedResponseCode, actualResponseCode);
+        }
     }
 
 }
