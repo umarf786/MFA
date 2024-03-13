@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import static SSDT.User.users;
 
-public class MultiAuth extends Authentication {
+public class MultiAuth {
     private final Scanner input;
 
     public MultiAuth(Scanner input){
