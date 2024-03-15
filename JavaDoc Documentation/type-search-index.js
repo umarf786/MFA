@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"SSDT","l":"Authentication"},{"p":"SSDT","l":"CodeGenerator"},{"p":"SSDT","l":"Database"},{"p":"SSDT","l":"Demo"},{"p":"SSDT","l":"MultiAuth"},{"p":"SSDT","l":"User"}];updateSearchResults();

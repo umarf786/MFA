@@ -1,6 +1,7 @@
 package SSDT;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,7 +9,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockedStatic;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +19,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
 
 class AuthenticationTest {
+
+    private ByteArrayOutputStream outContent;
+    private PrintStream originalSystemOut;
+
+    @BeforeEach
+    void setUp(){
+        // Redirect System.out to a ByteArrayOutputStream
+        originalSystemOut = System.out;
+        outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+    }
 
     @AfterEach
     void tearDown(){
@@ -48,7 +62,12 @@ class AuthenticationTest {
 
             // Assertion
             assertEquals(expected_result, actual_result);
-
+            assertTrue(outContent.toString().contains("Enter username:"));
+            assertTrue(outContent.toString().contains("Enter password:"));
+            assertTrue(outContent.toString().contains("Select an authentication method:"));
+            assertTrue(outContent.toString().contains(authMethod));
+            assertTrue(outContent.toString().contains("Logged in!"));
+            assertTrue(outContent.toString().contains("MOCK:"));
         }
     }
 
@@ -68,6 +87,7 @@ class AuthenticationTest {
 
         // Assertion
         assertEquals(expected_result, actual_result);
+        assertTrue(outContent.toString().contains("No user found with that username"));
     }
 
     @Test
@@ -86,6 +106,7 @@ class AuthenticationTest {
 
         // Assertion
         assertEquals(expected_result, actual_result);
+        assertTrue(outContent.toString().contains("Password is incorrect"));
     }
 
     @Test
@@ -141,6 +162,7 @@ class AuthenticationTest {
 
         // Assertion
         assertEquals(expected_result, actual_result);
+        assertTrue(outContent.toString().contains("Issue with MFA, could not log you in"));
     }
 
 

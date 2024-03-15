@@ -1,6 +1,7 @@
 package SSDT;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,14 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 
 class MultiAuthTest {
-//    private ByteArrayOutputStream outContent;
-//
-//    @BeforeEach
-//    void setUp(){
-//        // Redirect System.out to a ByteArrayOutputStream
-//        outContent = new ByteArrayOutputStream();
-//        System.setOut(new PrintStream(outContent));
-//    }
+    private ByteArrayOutputStream outContent;
+    private PrintStream originalSystemOut;
+
+    @BeforeEach
+    void setUp(){
+        // Redirect System.out to a ByteArrayOutputStream
+        originalSystemOut = System.out;
+        outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+    }
 
     @AfterEach
     void tearDown(){
@@ -59,7 +62,8 @@ class MultiAuthTest {
 
             // Assertion
             assertEquals(expected_result, actual_result);
-            // assertTrue(outContent.toString().contains("MFA accepted"));
+            assertTrue(outContent.toString().contains("MFA accepted"));
+            assertTrue(outContent.toString().contains("MOCK:"));
         }
     }
 
@@ -79,6 +83,7 @@ class MultiAuthTest {
 
         // Assertion
         assertEquals(expected_result, actual_result);
+        assertTrue(outContent.toString().contains("Not a valid authentication method or this method is not available to you"));
     }
 
     @Test
@@ -115,6 +120,7 @@ class MultiAuthTest {
 
         // Assertion
         assertEquals(expected_result, actual_result);
+        assertTrue(outContent.toString().contains("Please enter a valid code next time, try again"));
     }
 
     @Test
@@ -172,6 +178,8 @@ class MultiAuthTest {
 
             // Assert the result
             assertEquals(expectedResponseCode, actualResponseCode);
+            assertTrue(outContent.toString().contains("Calling your phone now with a code. Please enter it"));
+            assertTrue(outContent.toString().contains("MOCK:"));
         }
     }
 
@@ -198,6 +206,8 @@ class MultiAuthTest {
 
             // Assert the result
             assertEquals(expectedResponseCode, actualResponseCode);
+            assertTrue(outContent.toString().contains("Sending a message now with a code. Please enter it"));
+            assertTrue(outContent.toString().contains("MOCK:"));
         }
     }
 
@@ -224,6 +234,8 @@ class MultiAuthTest {
 
             // Assert the result
             assertEquals(expectedResponseCode, actualResponseCode);
+            assertTrue(outContent.toString().contains("Sending an email now with a code. Please enter it"));
+            assertTrue(outContent.toString().contains("MOCK:"));
         }
     }
 
@@ -250,6 +262,8 @@ class MultiAuthTest {
 
             // Assert the result
             assertEquals(expectedResponseCode, actualResponseCode);
+            assertTrue(outContent.toString().contains("Open your auth app and enter the code"));
+            assertTrue(outContent.toString().contains("MOCK:"));
         }
     }
 
